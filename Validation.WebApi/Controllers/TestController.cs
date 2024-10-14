@@ -10,12 +10,17 @@ namespace Validation.WebApi.Controllers;
 [ApiController]
 public class TestController : ControllerBase
 {
+    private readonly IValidatorControl validator;
 
+    public TestController(IValidatorControl validator)
+    {
+        this.validator = validator;
+    }
     [HttpPost]
     public async Task<IActionResult> TestRequsetAsync([FromBody] TestRequset request)
     {
 
-        var ves = await ValidatorControl.TestRequset.RequestValidateAsync(request);
+        var ves = await validator.RequestValidateAsync(request);
         return Ok(ves);
     }
 
@@ -25,11 +30,12 @@ public class TestController : ControllerBase
         var ves = new ValidatorResult();
         try
         {
-             ves = await ValidatorControl.TestNoRequset.RequestValidateAsync(request);
+             ves = await validator.RequestValidateAsync(request);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
+            return Ok(ex);
         }
         return Ok(ves);
     }

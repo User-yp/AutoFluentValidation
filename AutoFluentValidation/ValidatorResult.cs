@@ -7,7 +7,7 @@ public class ValidatorResult
     public bool IsValid { get; private set; } = true;
     public int ErrorCount { get; private set; } = 0;
     
-    public List<ErrorMessage> ErrorMessage { get; private set; } = [];
+    public List<ErrorMessage> ErrorMessage { get; private set; } = new List<ErrorMessage>();
     public ValidatorResult()
     {
 
