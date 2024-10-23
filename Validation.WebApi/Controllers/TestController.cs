@@ -1,6 +1,4 @@
 ﻿using AutoFluentValidation;
-using AutoFluentValidation.Extensions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Validation.WebApi.Requset_Validator;
 

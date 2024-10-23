@@ -1,16 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <TargetFrameworks>net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
+    <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Title>$(AssemblyName)</Title>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>pengye</Authors>
+    <PackageProjectUrl>https://github.com/User-yp/AutoFluentValidation</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/User-yp/AutoFluentValidation</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>FluentValidation</PackageTags>
+    <Description>Easy-to-use manual validation mode for FluentValidation auto-registration</Description>
+	  <Version>1.0.0</Version>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+	  <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AsmResolver.DotNet" Version="5.5.1" />
-    <PackageReference Include="FluentValidation" Version="11.10.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="10.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
   </ItemGroup>
 
 </Project>

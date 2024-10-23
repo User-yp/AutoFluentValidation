@@ -1,8 +1,11 @@
 using FluentValidation;
+using System.Threading.Tasks;
 
-namespace AutoFluentValidation;
-public interface IValidatorControl
+namespace AutoFluentValidation
 {
-    Task <IValidator<T>> GetValidatorAsync<T>(T tType);
-    Task<ValidatorResult> RequestValidateAsync<T>(T request) where T : IValidatorBase;
+    public interface IValidatorControl
+    {
+        Task <IValidator<T>> GetValidatorAsync<T>(T tType);
+        Task<ValidatorResult> RequestValidateAsync<T>(T request) where T : IValidatorBase;
+    }
 }

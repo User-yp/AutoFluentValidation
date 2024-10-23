@@ -1,3 +1,4 @@
-﻿namespace AutoFluentValidation;
-
-public interface IValidatorBase { }
+﻿namespace AutoFluentValidation
+{
+    public interface IValidatorBase { }
+}

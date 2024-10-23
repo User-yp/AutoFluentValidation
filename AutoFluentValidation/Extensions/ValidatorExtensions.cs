@@ -5,81 +5,80 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AutoFluentValidation.Extensions;
-
-public static class ValidatorExtensions
+namespace AutoFluentValidation.Extensions
 {
-    /// <summary>
-    /// 按特性中的生命周期注入业务组件
-    /// </summary>
-    /// <param name="service"></param>
-    public static IServiceCollection AddFluentValidation(this IServiceCollection service, IEnumerable<Assembly> assemblies)
+    public static class ValidatorExtensions
     {
-        return service.AddFluentValidation(assemblies?.ToArray() ?? Array.Empty<Assembly>());
-    }
-    public static IServiceCollection AddFluentValidation(this IServiceCollection service, params Assembly[] assemblies)
-    {
-        var ser = service.InitValidatorService(assemblies);
-        service.AddValidatorControl();
-        return ser;
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="service"></param>
-    /// <param name="assemblies">指定程序集</param>
-    /// <returns></returns>
-    public static IServiceCollection InitValidatorService(this IServiceCollection service, params Assembly[] assemblies)
-    {
-        if (assemblies == null || assemblies.Length == 0)
+        /// <summary>
+        /// 按特性中的生命周期注入业务组件
+        /// </summary>
+        /// <param name="service"></param>
+        public static IServiceCollection AddFluentValidation(this IServiceCollection service, IEnumerable<Assembly> assemblies)
         {
-            throw new ArgumentException("Assemblies cannot be null or empty");
+            return service.AddFluentValidation(assemblies?.ToArray() ?? Array.Empty<Assembly>());
         }
-        //获取有ServiceAttribute特性的所有类
-        List<Type> typeAttribute = assemblies
-                .SelectMany(a => a.GetTypes())
-                .Where(t => t.IsClass && !t.IsAbstract
-                && t.GetCustomAttributes(typeof(ValidatorAttribute), false).Length != 0)
-                .ToList();
-
-        if (typeAttribute.Count == 0)
+        public static IServiceCollection AddFluentValidation(this IServiceCollection service, params Assembly[] assemblies)
+        {
+            service.InitValidatorService(assemblies);
+            service.AddValidatorControl();
             return service;
+        }
 
-        typeAttribute.ForEach(impl =>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="assemblies">指定程序集</param>
+        /// <returns></returns>
+        public static IServiceCollection InitValidatorService(this IServiceCollection service, params Assembly[] assemblies)
         {
-            //获取生命周期
-            var lifetime = impl.GetCustomAttribute<ValidatorAttribute>()!.LifeTime;
-            //获取ServiceType
-            var serviceType = impl.GetCustomAttribute<ValidatorAttribute>()!.ServiceType;
-            //写入泛型参数，获取IValidator<>类型
-            var validatorType = typeof(IValidator<>).MakeGenericType(impl);
-
-            //var res=typeof()
-            //获取该类注入的生命周期
-            switch (lifetime)
+            if (assemblies == null || assemblies.Length == 0)
             {
-                case ServiceLifetime.Singleton:
-                    service.AddSingleton(validatorType, serviceType);
-                    break;
-                case ServiceLifetime.Scoped:
-                    service.AddScoped(validatorType, serviceType);
-                    break;
-                case ServiceLifetime.Transient:
-                    service.AddTransient(validatorType, serviceType);
-                    break;
+                throw new ArgumentException("Assemblies cannot be null or empty");
             }
-        });
-        return service;
-    }
-    public static void AddValidatorControl(this IServiceCollection service)
-    {
-        service.AddSingleton(pro =>
+            //获取有ServiceAttribute特性的所有类
+            List<Type> typeAttribute = assemblies
+                    .SelectMany(a => a.GetTypes())
+                    .Where(t => t.IsClass && !t.IsAbstract
+                    && t.GetCustomAttributes(typeof(ValidatorAttribute), false).Length != 0)
+                    .ToList();
+
+            if (typeAttribute.Count == 0)
+                return service;
+
+            typeAttribute.ForEach(impl =>
+            {
+                //获取生命周期
+                var lifetime = impl.GetCustomAttribute<ValidatorAttribute>()!.LifeTime;
+                //获取ServiceType
+                var serviceType = impl.GetCustomAttribute<ValidatorAttribute>()!.ServiceType;
+                //写入泛型参数，获取IValidator<>类型
+                var validatorType = typeof(IValidator<>).MakeGenericType(impl);
+
+                //var res=typeof()
+                //获取该类注入的生命周期
+                switch (lifetime)
+                {
+                    case ServiceLifetime.Singleton:
+                        service.AddSingleton(validatorType, serviceType);
+                        break;
+                    case ServiceLifetime.Scoped:
+                        service.AddScoped(validatorType, serviceType);
+                        break;
+                    case ServiceLifetime.Transient:
+                        service.AddTransient(validatorType, serviceType);
+                        break;
+                }
+            });
+            return service;
+        }
+        public static void AddValidatorControl(this IServiceCollection service)
         {
-            return new ValidatorControl(service.BuildServiceProvider()) as IValidatorControl;
-        });
+            service.AddSingleton(pro =>
+            {
+                return new ValidatorControl(service.BuildServiceProvider()) as IValidatorControl;
+            });
+        }
     }
 }
