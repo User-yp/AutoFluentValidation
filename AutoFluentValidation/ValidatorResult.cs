@@ -1,4 +1,4 @@
-﻿using FluentValidation.Results;
+using FluentValidation.Results;
 using System.Collections.Generic;
 
 namespace AutoFluentValidation
@@ -6,25 +6,36 @@ namespace AutoFluentValidation
     public class ValidatorResult
     {
         public bool IsValid { get; private set; } = true;
+
         public int ErrorCount { get; private set; } = 0;
-    
-        public List<ErrorMessage> ErrorMessage { get; private set; } = new List<ErrorMessage>();
+
+        public List<ErrorMessage> ErrorMessages { get; private set; } = new List<ErrorMessage>();
+
         public ValidatorResult()
         {
-
         }
+
+        /// <summary>
+        /// 设置验证错误信息（重复调用会覆盖之前的结果）
+        /// </summary>
         public ValidatorResult SetErrorMessage(List<ValidationFailure> failures)
         {
-            ErrorCount = failures.Count;
+            // 重置状态，确保幂等性
+            ErrorMessages = new List<ErrorMessage>();
+            ErrorCount = failures?.Count ?? 0;
             IsValid = ErrorCount == 0;
-            if (!IsValid)
-                failures.ForEach(failure =>
+
+            if (!IsValid && failures != null)
+            {
+                foreach (var failure in failures)
                 {
-                    ErrorMessage.Add(new ErrorMessage(failure.PropertyName, failure.ErrorMessage));
-                });
+                    ErrorMessages.Add(new ErrorMessage(failure.PropertyName, failure.ErrorMessage));
+                }
+            }
 
             return this;
         }
     }
+
     public record ErrorMessage(string? PropertyName, string? Message);
 }

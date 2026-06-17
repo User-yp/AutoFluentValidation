@@ -1,6 +1,6 @@
-﻿using AutoFluentValidation;
+using AutoFluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Validation.WebApi.Requset_Validator;
+using Validation.WebApi.Request_Validator;
 
 namespace Validation.WebApi.Controllers;
 
@@ -8,33 +8,32 @@ namespace Validation.WebApi.Controllers;
 [ApiController]
 public class TestController : ControllerBase
 {
-    private readonly IValidatorControl validator;
+    private readonly IValidatorControl _validator;
 
     public TestController(IValidatorControl validator)
     {
-        this.validator = validator;
-    }
-    [HttpPost]
-    public async Task<IActionResult> TestRequsetAsync([FromBody] TestRequset request)
-    {
-
-        var ves = await validator.RequestValidateAsync(request);
-        return Ok(ves);
+        _validator = validator;
     }
 
     [HttpPost]
-    public async Task<IActionResult> TestNoRequsetAsync([FromBody] TestNoRequset request)
+    public async Task<IActionResult> TestRequestAsync([FromBody] TestRequest request)
     {
-        var ves = new ValidatorResult();
+        var result = await _validator.RequestValidateAsync(request);
+        return Ok(result);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> TestNoRequestAsync([FromBody] TestNoRequest request)
+    {
+        ValidatorResult result;
         try
         {
-             ves = await validator.RequestValidateAsync(request);
+            result = await _validator.RequestValidateAsync(request);
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
-            return Ok(ex);
+            return BadRequest(new { error = ex.Message });
         }
-        return Ok(ves);
+        return Ok(result);
     }
 }

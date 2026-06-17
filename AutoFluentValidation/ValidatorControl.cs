@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
@@ -7,22 +7,26 @@ namespace AutoFluentValidation
 {
     public class ValidatorControl : IValidatorControl
     {
-        public readonly ServiceProvider _service;
-        public ValidatorControl(ServiceProvider service)
+        private readonly IServiceProvider _serviceProvider;
+
+        public ValidatorControl(IServiceProvider serviceProvider)
         {
-            _service = service;
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        public Task<IValidator<T>> GetValidatorAsync<T>(T tType)
+        public IValidator<T> GetValidator<T>()
         {
-            var validator= _service.GetService<IValidator<T>>() 
-                ?? throw new ApplicationException(" 'validator' Not Registered ");
-            return Task.FromResult(validator);
+            return _serviceProvider.GetService<IValidator<T>>()
+                ?? throw new InvalidOperationException(
+                    $"未注册 IValidator<{typeof(T).Name}> 类型的验证器。请确保已正确标记 [Validator] 特性并调用 AddFluentValidation。");
         }
 
-        public async Task<ValidatorResult> RequestValidateAsync<T>(T request) where T : IValidatorBase
+        public async Task<ValidatorResult> RequestValidateAsync<T>(T request)
         {
-            var validator =await GetValidatorAsync(request);
+            var validator = _serviceProvider.GetService<IValidator<T>>()
+                ?? throw new InvalidOperationException(
+                    $"未注册 IValidator<{typeof(T).Name}> 类型的验证器。请确保已正确标记 [Validator] 特性并调用 AddFluentValidation。");
+
             var val = await validator.ValidateAsync(new ValidationContext<T>(request));
             var result = new ValidatorResult();
             if (!val.IsValid)

@@ -5,7 +5,14 @@ namespace AutoFluentValidation
 {
     public interface IValidatorControl
     {
-        Task <IValidator<T>> GetValidatorAsync<T>(T tType);
-        Task<ValidatorResult> RequestValidateAsync<T>(T request) where T : IValidatorBase;
+        /// <summary>
+        /// 获取指定类型的验证器实例
+        /// </summary>
+        IValidator<T> GetValidator<T>();
+
+        /// <summary>
+        /// 验证请求对象并返回验证结果
+        /// </summary>
+        Task<ValidatorResult> RequestValidateAsync<T>(T request);
     }
 }
