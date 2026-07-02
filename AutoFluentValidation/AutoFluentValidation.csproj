@@ -1,21 +1,38 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Title>$(AssemblyName)</Title>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <Title>AutoFluentValidation</Title>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>pengye</Authors>
+    <Copyright>Copyright © 2025 pengye</Copyright>
     <PackageProjectUrl>https://github.com/User-yp/AutoFluentValidation</PackageProjectUrl>
     <RepositoryUrl>https://github.com/User-yp/AutoFluentValidation</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>FluentValidation;Validation;AutoRegister;DI</PackageTags>
     <Description>为 FluentValidation 提供基于特性的自动注册和手动调用的轻量级验证框架</Description>
     <Version>1.1.0</Version>
+    <PackageReleaseNotes>
+v1.1.0 更新:
+- 修复: AddValidatorControl 中 BuildServiceProvider() 创建独立DI容器的致命缺陷
+- 破坏性变更: GetValidatorAsync → GetValidator (同步方法，移除无用参数)
+- 破坏性变更: ValidatorResult.ErrorMessage → ErrorMessages
+- 破坏性变更: 移除 net5.0 目标框架，新增 net9.0
+- 优化: 移除 RequestValidateAsync 的 IValidatorBase 强制约束
+- 优化: 添加 AbstractValidator&lt;T&gt; 泛型参数匹配验证
+- 新增: XML 文档文件
+- 新增: 符号包 (snupkg)
+    </PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
     <IsPackable>true</IsPackable>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,15 +40,14 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <None Include="icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="10.4.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
@@ -47,6 +63,11 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
   </ItemGroup>
 
 </Project>

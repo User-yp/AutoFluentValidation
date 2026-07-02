@@ -236,7 +236,7 @@ var validator = _validator.GetValidator<CreateOrderRequest>();
 | FluentValidation | 10.4.0 |
 | Microsoft.Extensions.DependencyInjection | 5.0.0+ |
 
-支持目标框架：`net5.0` `net6.0` `net7.0` `net8.0`
+支持目标框架：`net6.0` `net7.0` `net8.0` `net9.0`
 
 ---
 
